@@ -1,0 +1,462 @@
+= Cypress
+:Author: Simon Stratton
+:Version: 0.1
+:imagesdir: images
+:source-highlighter: prettify
+
+:doctype: book
+
+:blank: pass:[ +]
+
+Cypress is one of a new breed of Test Automation tools that are helping the industry break free from the stranglehold of `selenium` and selenium-based tools such as `WebDriverIO` and `Protractor`. The tests run natively in the browser, so you don't need `drivers` or `selenium servers` connecting by the `wire` protocol. They're much faster, much more powerful and incredibly robust and reliable.
+
+The code can also be easily incorporated into your application project structure and handles many application frameworks such as `React`, `Angular` or `Vue` with ease.
+
+Cypress also allows you speed up your tests by:
+
+. Stubbing out your server.
+. Set up environments (i.e. running any `before` or `given` pre-requesites) through HTTP requests directly at the API.
+. Interact directly with your application during runtime using `mocks`, `spies` and `stubs`.
+
+This last point is especially powerful, as you can fool your application into thinking it's a certain time or date, or force it to jump to a different page if it's a 'single URL' application.
+
+The JavaScript `await / async` promise handlers are all hidden away under the hood, which reduces complexity, but can sometimes surprise you. As it runs natively in the browser, commands like Selenium's 'implicit or explicit waits' are no longer needed.
+
+It is also possible to integrate Cypress with `cucumber`:
+
+https://www.npmjs.com/package/cypress-cucumber-preprocessor
+
+The main disadvantage of Cypress is that it currently only supports the Chrome browser, but a wider browser support is planned soon.
+
+
+<<<
+== Creating a Cypress Project
+
+Let's set up a new project in your `GitHub` account and clone it locally.
+
+{blank}
+*****
+. Open a terminal and navigate to the root directory of the project.
+. Run `npm init -y` to create your `package.json` file.
+*****
+{blank}
+
+If you wish, you can set up shortcuts for Cypress commands by installing the `Cypress Snippets` extension in VSCode. You can also set up `linting` with the Cypress plugin for ESLint:
+
+https://github.com/cypress-io/eslint-plugin-cypress
+
+Cypress uses `Mocha` for its test framework and for its assertions, so it may well be worth installing the `ES6 Mocha Snippets` extension and the `Mocha` plugin for ESLint:
+
+https://www.npmjs.com/package/eslint-plugin-mocha
+
+For now, we'll skip that and get started installing our software. You only need two dependencies for Cypress, one for the Cypress application and one for `mochawesome` which will be our reporting module.
+
+{blank}
+*****
+. In your new project, open up the `Terminal` in VSCode.
+. Type the following command to install `Cypress` and the `mochawesome` reporter.
++
+.Terminal
+[source,powershell]
+ npm install cypress mochawesome mocha@5.2.0 --save-dev
++
+. In your `package.json` file, change the `test` script to the following:
++
+.package.json
+[source,json]
+----
+"test": "cypress open"
+----
+*****
+{blank}
+
+That's everything. Let's open the Cypress runner and start creating a specification.
+
+{blank}
+*****
+. Type the following command into the `Terminal`.
++
+.Terminal
+[source,powershell]
+ npm test
++
+. If any `firewall` access warnings pop up on the computer, click `yes` to dismiss them.
+*****
+{blank}
+
+The Cypress runner starts and looks like this:
+
+image::cypressrunner.jpg[image]
+
+Cypress comes with some pre-installed tests to give you examples of the syntax. Let's move these out of the way, so we can work on our own test. 
+
+Leave the cypress runner open.
+
+{blank}
+*****
+. Back in our project in VSCode, open the `cypress > integration` folder. Drag the `examples` folder out of the `integration` folder and up into the `cypress` directory above it.
+*****
+{blank}
+
+Your folder structure now looks like this:
+
+image::examplesmove.jpg[image]
+
+{blank}
+*****
+. They'll remain here for future reference, but will no longer clutter up our runner.
+. Create a new file in the `integration` folder called `angular_website`.
+. In this folder, create a new file called `product.spec.js`.
+*****
+{blank}
+
+
+image::productspec.jpg[image]
+
+You'll also see this appear in our 'Cypress' runner:
+
+image::runnerspec.jpg[image]
+
+Before we start writing our tests, let's set the `base URL` of our web application so Cypress knows what website to open and what reporter to use.
+
+{blank}
+*****
+. In the `cypress.json` file in the root directory of your project, add the following code inside the curly brackets `{}`:
++
+.cypress.json
+[source,json]
+----
+    "baseUrl": "http://automate.safebear.co.uk:8080/",
+    "reporter": "mochawesome"
+----
++
+*****
+{blank}
+
+Your cypress.json file now looks like the following:
+
+.cypress.json
+[source,json]
+----
+{
+    "baseUrl": "http://automate.safebear.co.uk:8080/",
+    "reporter": "mochawesome"
+}
+----
+
+Now we can start creating our test. Let's start by opening the website.
+
+{blank}
+*****
+. We can create our test name with the `context` command. Add the following code to your `product.spec.js` file:
+.product.spec.js
+[source,javascript]
+----
+context('Product Tests (CRUD)', () => {
+
+
+
+})
+----
+*****
+{blank}
+
+Leave some space between the curly brackets for us to add our tests. 
+
+First, let's add a quick `before` statement that opens up our browser at the `baseUrl`
+
+{blank}
+*****
+. Within the curly brackets of your `context`, add the following code:
+.product.spec.js
+[source,javascript]
+----
+    beforeEach(() => {
+        cy.visit('')
+      })
+----
+*****
+{blank}
+
+Let's break this command down.
+
+`beforeEach`
+
+Is a `hook` that will run the contents of the function (`() => {}`) before every test. 
+
+`cy`
+
+Is the api for Cypress. It exposes all the commands you can use to interact with the browser.
+
+`visit`
+
+This opens the browser at a certain URL. As we've set our `baseUrl` in the `cypress.json` file, we don't need to repeat it here.
+
+Now let's try running the test.
+
+{blank}
+*****
+. In the Cypress test runner, click on the `product.spec.js` file.
+. This will open the browser and then show the error `No tests found in your file`.
+. If possible, drag this browser to another screen, so you can see it update as your test is written.
+*****
+{blank}
+
+Now we'll create our first empty test.
+
+{blank}
+*****
+. Under the `beforeEach` function, add the following code:
+.product.spec.js
+[source,javascript]
+----
+    it("creates a new product", () => {
+
+
+
+    })  
+----
++
+. Again, leave some space between the curly brackets for us to add our test steps.
+*****
+{blank}
+
+Take a look at the browser window. It will now be open on our website. The browser dynamically updates as we write our test code.
+
+You can see that the `it` statement creates a test. If we want to create another test within this specification, we just need to create another `it` statement beneath this one.
+
+You code should now look like this:
+
+.product.spec.js
+[source,javascript]
+----
+context('Product Tests (CRUD)', () => {
+
+    beforeEach(() => {
+        cy.visit('')
+      })
+
+    it("creates a new product", () => {
+
+
+
+
+
+    })  
+
+});
+----
+
+Let's start writing some test steps. We'll use the `get` command to select elements.
+
+Unlike protractor, the `get` command uses `JQuery` selectors to find elements on the page. `JQuery` uses the same syntax as `CSS Selectors`, but are far more powerful, which makes it much easier to find tricky elements.
+
+For a comprehensive list of `JQuery` selectors, see this website:
+
+ www.w3schools.com/jquery/jquery_ref_selectors.asp
+
+Let's write a quick test to click on the `plus` button and add a product.
+
+{blank}
+*****
+. Within the `it` test statement, add the following code. Don't forget to watch the browser update as you add each line (it will help to see if you've made any typos):
+.product.spec.js
+[source,javascript]
+----
+      cy.get('.mat-flat-button, .mat-primary').click();
+
+      cy.url().should('include', '/product-add');
+
+      cy.get('#mat-input-0').type("carrots");
+
+      cy.get('#mat-input-1').type("orange vegetable");
+
+      cy.get('#mat-input-2').type("10");
+
+      cy.get('[type="submit"]').click();
+
+      cy.get('h2').should('contain','carrots');
+----
+*****
+{blank}
+
+Let's break this down.
+
+Although we've use `JQuery` selectors here, the short-hand format of our locators is the same as the CSS Selectors we created for Protractor:
+
+`.` = `class`
+
+`#` = `id`
+
+`[]` = `attribute` (again, we've used the `type` attribute to find the button)
+
+`h2` = `tag` (this can be any tag name, but here we've use `h2` for the heading 2)
+
+We've also used the `should` command for our assertions. When we change to a new URL, we check that we're now on the `product-add` page. And finally, when the product is added, we check that the header contains the product name.
+
+The `type` command types text into a field and the `click` command can click on an element.
+
+Because `Cypress` runs in the browser, there's no need for `waits` to handle loading delays. `promises` are handled behind the scenes, however it's worth knowing that the occasional command `yields` a `promise` and therefore needs a `.then` or `async/await` command.
+
+You can see the entire Cypress API here:
+
+ docs.cypress.io/api/api/table-of-contents.html
+
+It's also worth noting that even with this simple test, Cypress runs faster than Protractor.
+
+Because Cypress runs as JavaScript in the browser, it is also far more stable that Protractor, which relies on `selenium` and the `JsonWireProtocol` to communicate with your browser. Anyone familar with Protractor will know that they constantly need to keep upgrading their `selenium server` and the framework itself to keep up with the latest version of their browser.
+
+Your spec file should now look like this:
+
+.product.spec.js
+[source,javascript]
+----
+context('manage product tests (CRUD)', () => {
+
+    // Open the browser before each test
+    beforeEach(() => {
+        cy.visit('')
+      })
+
+    // Our test to create a new product
+    it("creates a new product", () => {
+
+      // Click on the add product button  
+      cy.get('.mat-flat-button, .mat-primary').click();
+
+      // Check that we're now on the 'add product' page
+      cy.url().should('include', '/product-add');
+
+      // Fill out the form    
+      cy.get('#mat-input-0').type("carrots");
+      cy.get('#mat-input-1').type("orange vegetable");
+      cy.get('#mat-input-2').type("10");
+
+      // Click the submit button
+      cy.get('[type="submit"]').click();
+      
+      // Finally check that the product has been created.
+      cy.get('h2').should('contain','carrots');
+
+    })  
+
+});
+----
+
+<<<
+
+== Live Running and Time Travel
+
+In the browser window, you'll notice that the steps and the assertions are listed on the left-hand side of the browser. Click on any of these steps and you'll notice that the contents of the browser steps back in time to when that step occurred. This makes debugging your tests easy.
+
+If you click on the `-CLICK` step, you'll notice that the `+` button image:addproduct.jpg[image] on the page has been highlighted with a red cross, indicating where on the page Cypress will click. Again, useful for debugging.
+
+If you open up `Developer Tools` and click on the `Console` you'll also be given additional information that will help you to work out what text is being brought back from the screen and other useful information.
+
+<<<
+
+== Running Headless and Reporting
+
+Cypress also allows you to run headlessly for Continuous Integration. 
+
+{blank}
+*****
+. Close the Cypress runner and the browser.
+. From the terminal, run the following command:
+.Terminal
+[source,powershell]
+----
+npx cypress run --reporter mochawesome --spec 'cypress/integration/angular_website/**/*'
+----
+*****
+{blank}
+
+The test will run without opening the browser. Open the `mochawesome-report` folder (located in the root directory of the project). Right-click on the `mochawesome.html` file and choose `Open in Default Browser` to view the report.
+
+NOTE: It's worth adding the `mochawesome-report/` folder to your `.gitignore` file so this isn't pushed to your remote repository. Otherwise you'll get a lot of unnecessary conflicts.
+
+<<<
+
+== Video Recording
+
+Even though the last test ran headlessly, Cypress captured a video of it for you to view later.
+
+{blank}
+*****
+. Open the `cypress > videos > angular_website` folder. 
+. Right-click on the `product.spec.js.mp4` file and choose `Reveal in Explorer`.
+. Double-click on the `product.spec.js` file to run the video
+*****
+{blank}
+
+<<<
+
+== Creating Test Data
+
+You can also store test data in the `fixtures` folder and then use it in your tests. Let's create some test data for a `product` using the `json` data format.
+
+{blank}
+*****
+. Open the `cypress > fixtures` folder and create a new file called `product.json`. 
+. In the file, add the following `JSON` code:
++
+.product.json
+[source,json]
+----
+{
+  "name": "beetroot",
+  "description": "red vegetable",
+  "price": "20"
+}
+----
++
+. Start your Cypress runner using the `npm test` command in the `Terminal`.
+. In the test runner, click on the `product.spec.js` specification so the browser opens and we can debug our test works as we type.
+. Then update your test spec (`product.spec.js` in the `integration > angular_website` folder) to look like the code below:
+*****
+{blank}
+
+.product.spec.js
+[source,javascript]
+----
+context('manage product tests (CRUD)', () => {
+
+    beforeEach(() => {
+        cy.visit('')
+      })
+
+    it("creates a new product", () => {
+
+        // Add a `fixture` function around our test steps
+        cy.fixture('product').then((product) => {      
+
+            cy.get('.mat-flat-button, .mat-primary').click();
+
+            cy.url().should('include', '/product-add');
+
+            // Change this step to use our `product name' from the test data
+            cy.get('#mat-input-0').type(product.name);
+
+            // Change this step to use our `product description`
+            cy.get('#mat-input-1').type(product.description);
+
+            // Change this step to use our `product price`
+            cy.get('#mat-input-2').type(product.price);
+
+            cy.get('[type="submit"]').click();
+
+            // Change this assertion so it checks against the `product name in the test data`.
+            cy.get('h2').should('contain',product.name);
+
+        })
+
+    })  
+
+})
+----
+
+NOTE: How would you set up Cypress so that it used `Page Objects` for its locators?
+
+
+
+
