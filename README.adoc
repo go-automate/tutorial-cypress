@@ -322,7 +322,7 @@ context('manage product tests (CRUD)', () => {
     it("creates a new product", () => {
 
       // Click on the add product button  
-      cy.get('.mat-flat-button, .mat-primary').click();
+      cy.get('.mat-flat-button.mat-primary').click();
 
       // Check that we're now on the 'add product' page
       cy.url().should('include', '/product-add');
@@ -430,7 +430,7 @@ context('manage product tests (CRUD)', () => {
         // Add a `fixture` function around our test steps
         cy.fixture('product').then((product) => {      
 
-            cy.get('.mat-flat-button, .mat-primary').click();
+            cy.get('.mat-flat-button.mat-primary').click();
 
             cy.url().should('include', '/product-add');
 

@@ -1,0 +1,4 @@
+{
+  "baseUrl": "http://automate.safebear.co.uk:8080/",
+  "reporter": "mochawesome"
+}
